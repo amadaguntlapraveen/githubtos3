@@ -1,4 +1,4 @@
-name: Upload Website to S3
+name: Deploy to S3
 
 on:
   push:
@@ -10,15 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Sync website folder to S3
-        uses: aws-actions/aws-s3-sync@v1
-        with:
-          bucket: cloudtechinsight
-          region: ap-south-1
-          source-dir: website
+      - name: Install AWS CLI
+        run: |
+          sudo apt update
+          sudo apt install -y awscli
+
+      - name: Upload to S3
+        run: |
+          aws s3 sync website/ s3://cloudtechinsight --region ap-south-1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
